@@ -36,8 +36,11 @@ import { OrdersModule } from './orders/orders.module';
 
 import { SuppliersModule } from './suppliers/suppliers.module';
 
+import { ProductsModule } from './products/products.module';
+
 @Module({
   imports: [
+    ProductsModule,
     SuppliersModule,
     OrdersModule,
     ConfigModule.forRoot({
