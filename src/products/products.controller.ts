@@ -1,17 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -19,18 +17,23 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { Product } from './domain/product';
-import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
+import { RolesGuard } from '../roles/roles.guard';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
+import { Product } from './domain/product';
+import { CreateProductDto } from './dto/create-product.dto';
 import { FindAllProductsDto } from './dto/find-all-products.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductsService } from './products.service';
 
 @ApiTags('Products')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'products',
   version: '1',
@@ -39,6 +42,7 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @ApiCreatedResponse({
     type: Product,
   })
@@ -84,6 +88,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @ApiParam({
     name: 'id',
     type: String,
@@ -97,6 +102,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @ApiParam({
     name: 'id',
     type: String,

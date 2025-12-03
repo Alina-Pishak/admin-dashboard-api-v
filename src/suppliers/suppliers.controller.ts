@@ -1,17 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { SuppliersService } from './suppliers.service';
-import { CreateSupplierDto } from './dto/create-supplier.dto';
-import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -19,18 +17,23 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { Supplier } from './domain/supplier';
-import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
+import { RolesGuard } from '../roles/roles.guard';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
+import { Supplier } from './domain/supplier';
+import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { FindAllSuppliersDto } from './dto/find-all-suppliers.dto';
+import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { SuppliersService } from './suppliers.service';
 
 @ApiTags('Suppliers')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'suppliers',
   version: '1',
@@ -39,6 +42,7 @@ export class SuppliersController {
   constructor(private readonly suppliersService: SuppliersService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @ApiCreatedResponse({
     type: Supplier,
   })
@@ -84,6 +88,7 @@ export class SuppliersController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @ApiParam({
     name: 'id',
     type: String,
@@ -100,6 +105,7 @@ export class SuppliersController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @ApiParam({
     name: 'id',
     type: String,
