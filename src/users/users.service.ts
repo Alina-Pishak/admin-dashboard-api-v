@@ -116,6 +116,10 @@ export class UsersService {
     return this.usersRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      spent: createUserDto.spent,
+
+      address: createUserDto.address,
+
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       email: email,
@@ -270,6 +274,10 @@ export class UsersService {
     return this.usersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      spent: updateUserDto.spent,
+
+      address: updateUserDto.address,
+
       firstName: updateUserDto.firstName,
       lastName: updateUserDto.lastName,
       email,
