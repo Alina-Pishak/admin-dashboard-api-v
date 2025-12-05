@@ -5,6 +5,12 @@ import { OrderStatus } from '../enums/order-status.enum';
 
 export class Order {
   @ApiProperty({
+    type: () => String,
+    nullable: true,
+  })
+  checkoutSessionId?: string | null;
+
+  @ApiProperty({
     type: () => [OrderItem],
     nullable: false,
   })
@@ -21,12 +27,6 @@ export class Order {
     nullable: false,
   })
   totalAmount?: number;
-
-  @ApiProperty({
-    type: () => String,
-    nullable: false,
-  })
-  checkoutSessionId?: string;
 
   @ApiProperty({
     enum: OrderStatus,

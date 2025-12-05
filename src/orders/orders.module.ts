@@ -13,11 +13,10 @@ import { OrdersService } from './orders.service';
 @Module({
   imports: [
     forwardRef(() => OrderItemsModule),
-
     UsersModule,
     // do not remove this comment
+    StripeModule.forRootAsync(),
     RelationalOrderPersistenceModule,
-    forwardRef(() => StripeModule.forRootAsync()),
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

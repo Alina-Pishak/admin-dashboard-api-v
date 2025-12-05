@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { OrderRepository } from '../order.repository';
-import { OrderRelationalRepository } from './repositories/order.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrderRepository } from '../order.repository';
 import { OrderEntity } from './entities/order.entity';
+import { OrderRelationalRepository } from './repositories/order.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OrderEntity])],

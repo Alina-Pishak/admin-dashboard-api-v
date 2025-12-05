@@ -18,6 +18,8 @@ export abstract class OrderRepository {
 
   abstract findByIds(ids: Order['id'][]): Promise<Order[]>;
 
+  abstract findByCheckoutSessionId(id: string): Promise<Order>;
+
   abstract update(
     id: Order['id'],
     payload: DeepPartial<Order>,

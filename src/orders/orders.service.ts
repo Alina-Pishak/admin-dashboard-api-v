@@ -17,7 +17,6 @@ import { Order } from './domain/order';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderStatus } from './enums/order-status.enum';
 import { OrderRepository } from './infrastructure/persistence/order.repository';
-import { OrderRelationalRepository } from './infrastructure/persistence/relational/repositories/order.repository';
 
 @Injectable()
 export class OrdersService {
@@ -26,11 +25,9 @@ export class OrdersService {
     private readonly orderItemService: OrderItemsService,
 
     private readonly userService: UsersService,
-
     // Dependencies here
-    
     private readonly orderRepository: OrderRepository,
-    private readonly orderRelationalRepository: OrderRelationalRepository,
+    @Inject(forwardRef(() => StripeService))
     private readonly stripeService: StripeService,
   ) {}
 
@@ -66,6 +63,7 @@ export class OrdersService {
     const order = await this.orderRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+
       items,
       user,
       totalAmount,
@@ -102,7 +100,7 @@ export class OrdersService {
   }
 
   findByCheckoutSessionId(id: string) {
-    return this.orderRelationalRepository.findByCheckoutSessionId(id);
+    return this.orderRepository.findByCheckoutSessionId(id);
   }
 
   async updateOrderStatus({
@@ -114,7 +112,7 @@ export class OrdersService {
   }): Promise<Order | null> {
     const order = await this.findByCheckoutSessionId(checkoutSessionId);
 
-    order.status = OrderStatus[status];
+    order.status = status;
 
     return this.orderRepository.update(order.id, order);
   }
@@ -126,6 +124,7 @@ export class OrdersService {
   // ) {
   //   // Do not remove comment below.
   //   // <updating-property />
+
   //   let items: OrderItem[] | undefined = undefined;
 
   //   if (updateOrderDto.items) {
@@ -163,6 +162,8 @@ export class OrdersService {
   //   return this.orderRepository.update(id, {
   //     // Do not remove comment below.
   //     // <updating-property-payload />
+  // checkoutSessionId: updateOrderDto.checkoutSessionId,
+
   //     items,
 
   //     user,

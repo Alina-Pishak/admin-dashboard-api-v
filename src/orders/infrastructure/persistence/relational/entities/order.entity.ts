@@ -18,6 +18,12 @@ import { OrderStatus } from '../../../../enums/order-status.enum';
   name: 'order',
 })
 export class OrderEntity extends EntityRelationalHelper {
+  @Column({
+    nullable: true,
+    type: String,
+  })
+  checkoutSessionId?: string | null;
+
   @OneToMany(() => OrderItemEntity, (childEntity) => childEntity.order, {
     eager: true,
     nullable: false,
@@ -35,12 +41,6 @@ export class OrderEntity extends EntityRelationalHelper {
   totalAmount?: number;
 
   @Column({
-    nullable: false,
-    type: String,
-  })
-  checkoutSessionId?: string;
-
-  @Column({
     type: 'enum',
     enum: OrderStatus,
     default: OrderStatus.PENDING,
@@ -55,6 +55,4 @@ export class OrderEntity extends EntityRelationalHelper {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-
 }
