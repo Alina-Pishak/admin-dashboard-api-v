@@ -1,23 +1,21 @@
-import {
-  // decorators here
-
-  IsString,
-  IsOptional,
-} from 'class-validator';
+import { IsArray, ValidateNested } from 'class-validator';
 
 import {
   // decorators here
   ApiProperty,
 } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { CreateOrderItemDto } from '../../order-items/dto/create-order-item.dto';
 
 export class CreateOrderDto {
   @ApiProperty({
     required: false,
-    type: () => String,
+    type: [CreateOrderItemDto],
   })
-  @IsOptional()
-  @IsString()
-  status?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateOrderItemDto)
+  items: CreateOrderItemDto[];
 
   // Don't forget to use the class-validator decorators in the DTO properties.
 }

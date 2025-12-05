@@ -52,6 +52,19 @@ export class OrderRelationalRepository implements OrderRepository {
     return entities.map((entity) => OrderMapper.toDomain(entity));
   }
 
+  async findByCheckoutSessionId(checkoutSessionId: string): Promise<Order> {
+  const order = await this.orderRepository.findOne({
+    where: { checkoutSessionId },
+  });
+
+  if (!order) {
+    throw new Error(`Order with session ID ${checkoutSessionId} not found`);
+  }
+
+  return order;
+}
+
+
   async update(id: Order['id'], payload: Partial<Order>): Promise<Order> {
     const entity = await this.orderRepository.findOne({
       where: { id },

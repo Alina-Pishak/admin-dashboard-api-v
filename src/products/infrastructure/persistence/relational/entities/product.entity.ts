@@ -15,7 +15,11 @@ import { EntityRelationalHelper } from '../../../../../utils/relational-entity-h
   name: 'product',
 })
 export class ProductEntity extends EntityRelationalHelper {
-  @ManyToMany(() => SupplierEntity, { eager: true, nullable: false , cascade: true,})
+  @ManyToMany(() => SupplierEntity, {
+    eager: true,
+    nullable: false,
+    cascade: true,
+  })
   @JoinTable()
   suppliers: SupplierEntity[];
 

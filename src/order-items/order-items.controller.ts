@@ -4,9 +4,9 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -22,36 +22,36 @@ import {
   InfinityPaginationResponseDto,
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
-import { Order } from './domain/order';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { FindAllOrdersDto } from './dto/find-all-orders.dto';
-import { OrdersService } from './orders.service';
+import { OrderItem } from './domain/order-item';
+import { CreateOrderItemDto } from './dto/create-order-item.dto';
+import { FindAllOrderItemsDto } from './dto/find-all-order-items.dto';
+import { OrderItemsService } from './order-items.service';
 
-@ApiTags('Orders')
+@ApiTags('Orderitems')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @Controller({
-  path: 'orders',
+  path: 'order-items',
   version: '1',
 })
-export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+export class OrderItemsController {
+  constructor(private readonly orderItemsService: OrderItemsService) {}
 
   @Post()
   @ApiCreatedResponse({
-    type: Order,
+    type: OrderItem,
   })
-  create(@Request() request, @Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(request.user, createOrderDto);
+  create(@Body() createOrderItemDto: CreateOrderItemDto) {
+    return this.orderItemsService.create(createOrderItemDto);
   }
 
   @Get()
   @ApiOkResponse({
-    type: InfinityPaginationResponse(Order),
+    type: InfinityPaginationResponse(OrderItem),
   })
   async findAll(
-    @Query() query: FindAllOrdersDto,
-  ): Promise<InfinityPaginationResponseDto<Order>> {
+    @Query() query: FindAllOrderItemsDto,
+  ): Promise<InfinityPaginationResponseDto<OrderItem>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
     if (limit > 50) {
@@ -59,7 +59,7 @@ export class OrdersController {
     }
 
     return infinityPagination(
-      await this.ordersService.findAllWithPagination({
+      await this.orderItemsService.findAllWithPagination({
         paginationOptions: {
           page,
           limit,
@@ -76,25 +76,27 @@ export class OrdersController {
     required: true,
   })
   @ApiOkResponse({
-    type: Order,
+    type: OrderItem,
   })
   findById(@Param('id') id: string) {
-    return this.ordersService.findById(id);
+    return this.orderItemsService.findById(id);
   }
 
-  // @Patch(':id')
-  // @ApiParam({
-  //   name: 'id',
-  //   type: String,
-  //   required: true,
-  // })
-  // @ApiOkResponse({
-  //   type: Order,
-  // })
-  // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-  //   return this.ordersService.update(id, updateOrderDto);
+  @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: OrderItem,
+  })
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateOrderItemDto: UpdateOrderItemDto,
+  // ) {
+  //   return this.orderItemsService.update(id, updateOrderItemDto);
   // }
-
   @Delete(':id')
   @ApiParam({
     name: 'id',
@@ -102,6 +104,6 @@ export class OrdersController {
     required: true,
   })
   remove(@Param('id') id: string) {
-    return this.ordersService.remove(id);
+    return this.orderItemsService.remove(id);
   }
 }

@@ -39,8 +39,11 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { ProductsModule } from './products/products.module';
 import { StripeModule } from './stripe/stripe.module';
 
+import { OrderItemsModule } from './order-items/order-items.module';
+
 @Module({
   imports: [
+    OrderItemsModule,
     ProductsModule,
     SuppliersModule,
     OrdersModule,
@@ -92,7 +95,7 @@ import { StripeModule } from './stripe/stripe.module';
     MailModule,
     MailerModule,
     HomeModule,
-    StripeModule,
+    StripeModule.forRootAsync(),
   ],
 })
 export class AppModule {}

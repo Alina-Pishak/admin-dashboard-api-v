@@ -1,10 +1,25 @@
 import { Order } from '../../../../domain/order';
+import { OrderItemMapper } from '../../../../../order-items/infrastructure/persistence/relational/mappers/order-item.mapper';
+
+import { UserMapper } from '../../../../../users/infrastructure/persistence/relational/mappers/user.mapper';
 
 import { OrderEntity } from '../entities/order.entity';
 
 export class OrderMapper {
   static toDomain(raw: OrderEntity): Order {
     const domainEntity = new Order();
+    if (raw.items) {
+      domainEntity.items = raw.items.map((item) =>
+        OrderItemMapper.toDomain(item),
+      );
+    }
+
+    if (raw.user) {
+      domainEntity.user = UserMapper.toDomain(raw.user);
+    }
+
+    domainEntity.totalAmount = raw.totalAmount;
+
     domainEntity.status = raw.status;
 
     domainEntity.id = raw.id;
@@ -16,6 +31,18 @@ export class OrderMapper {
 
   static toPersistence(domainEntity: Order): OrderEntity {
     const persistenceEntity = new OrderEntity();
+    if (domainEntity.items) {
+      persistenceEntity.items = domainEntity.items.map((item) =>
+        OrderItemMapper.toPersistence(item),
+      );
+    }
+
+    if (domainEntity.user) {
+      persistenceEntity.user = UserMapper.toPersistence(domainEntity.user);
+    }
+
+    persistenceEntity.totalAmount = domainEntity.totalAmount;
+
     persistenceEntity.status = domainEntity.status;
 
     if (domainEntity.id) {

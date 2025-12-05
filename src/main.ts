@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import {
   ClassSerializerInterceptor,
   ValidationPipe,
@@ -8,13 +7,17 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
+import 'dotenv/config';
+import * as express from 'express';
 import { AppModule } from './app.module';
-import validationOptions from './utils/validation-options';
 import { AllConfigType } from './config/config.type';
 import { ResolvePromisesInterceptor } from './utils/serializer.interceptor';
+import validationOptions from './utils/validation-options';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+  app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
+
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 
